@@ -1,6 +1,6 @@
 # Trans Copacabana
-## Cliente
+## Servidor
 ### Inicializacion
 Hay algunas dependencias especificadas en el archivo package.json, aun asi se especifican su instalacion a continuacion
-`npm install axios`
+`npm install express mysql cors body-parser nodemon`
 
