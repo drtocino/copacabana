@@ -1,7 +1,9 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 const mysql = require('mysql');
+//const bcrypt = require('bcrypt');
 
 const db = mysql.createPool({
     host: "127.0.0.1",
@@ -11,12 +13,26 @@ const db = mysql.createPool({
     database: "copacabana"
 });
 
-app.get('/',(req,res) => {
+app.use(cors());
+app.use(bodyParser.urlencoded({extended: true}));
 
-    const listaLugares = "SELECT * FROM bus;";
+app.get('/login/:usuario&:clave',(req,res) => {
+    const usuario = req.params.usuario;
+    const clave = req.params.clave;
+    const login = "SELECT * FROM usuario WHERE usuario = ? AND password = ?;";
 
-    db.query(listaLugares, (error,result) => {
-        res.send(result);
+    db.query(login, [usuario,clave], (error,result) => {
+        if(error){
+            console.log("Ocurrio un ERROR"+error)
+        }else{
+            console.log("RESULTADOS:"+result)
+            if(result === ""){
+                console.log("no existe")
+                res.send("no existe");
+            }else{
+                res.send(result);
+            }
+        }
     });
 })
 
