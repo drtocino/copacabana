@@ -90,7 +90,7 @@ const Login = () => {
                     }
                 }else{
                     setLog(true);
-                    history.push('/rutas')
+                    history.push('/app')
                     setLogin(response.data[0].usuario);
                     console.log(response.data[0])
                     console.log(login)
@@ -118,12 +118,6 @@ const Login = () => {
                 <label>Clave</label>
                 <input type="password" className="form-control" placeholder="Ingresa tu clave" onChange={(e) => {setClave(e.target.value)}} required/>
             </div>
-            <div className="form-group mt-3">
-                <div className="custom-control custom-checkbox">
-                    <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                    <label className="custom-control-label" htmlFor="customCheck1">Recuerdame</label>
-                </div>
-            </div>
             <button className="btn btn-danger mt-3" onClick={verificar}>Verificar</button>
             <link to></link>
         </form>
@@ -132,4 +126,10 @@ const Login = () => {
     );
 }
 
+            /*<div className="form-group mt-3">
+                <div className="custom-control custom-checkbox">
+                    <input type="checkbox" className="custom-control-input" id="customCheck1" />
+                    <label className="custom-control-label" htmlFor="customCheck1">Recuerdame</label>
+                </div>
+            </div>*/
 export default Login;
