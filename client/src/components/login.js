@@ -1,13 +1,16 @@
 import React,{useState,useEffect} from 'react';
 import axios from 'axios';
 import swal from 'sweetalert2';
+import {useHistory} from 'react-router-dom';
 
 const Login = () => {
+    let history = useHistory();
     const [usuario, setUsuario] = useState("");
     const [clave, setClave] = useState("");
     const [intentos, setIntentos] = useState(1);
     
     const [login, setLogin] = useState("");
+    const [log, setLog] = useState(false);
 
     axios.defaults.withCredentials = true;
 
@@ -86,6 +89,8 @@ const Login = () => {
                         });
                     }
                 }else{
+                    setLog(true);
+                    history.push('/rutas')
                     setLogin(response.data[0].usuario);
                     console.log(response.data[0])
                     console.log(login)
@@ -101,6 +106,8 @@ const Login = () => {
     }, [])
 
     return (
+        <div className="d-flex justify-content-center text-center m-3">
+        <div className="bg-white text-dark p-3 rounded">
         <form className="was-validated">
             <h3 className="p-3 border border-danger text-danger rounded">Autenticación</h3>
             <div className="form-group mt-3">
@@ -117,9 +124,11 @@ const Login = () => {
                     <label className="custom-control-label" htmlFor="customCheck1">Recuerdame</label>
                 </div>
             </div>
-            <button type="submit" className="btn btn-success btn-block mt-3"  onClick={autenticacion}>Continuar</button>
             <button className="btn btn-danger mt-3" onClick={verificar}>Verificar</button>
+            <link to></link>
         </form>
+        </div>
+        </div>
     );
 }
 
