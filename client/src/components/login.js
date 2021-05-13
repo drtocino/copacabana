@@ -87,6 +87,7 @@ const Login = () => {
                     }
                 }else{
                     setLogin(response.data[0].usuario);
+                    console.log(response.data[0])
                     console.log(login)
                 }
             });
