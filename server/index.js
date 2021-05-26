@@ -5,6 +5,8 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
+const { response } = require('express');
 const app = express();
 
 app.use(express.json());
@@ -40,6 +42,26 @@ const db = mysql.createPool({
     database: "copacabana"
 });
 
+const verifyJWT = (req,res,next) => {
+    const token = req.headers["x-access-token"]
+    if (!token){
+        res.send("Necesitas un token, logeate")
+    }else{
+        jwt.verify(token, "jwtSecret",(err,decoded) => {
+            if (err) {
+                res.json({auth: false, message: "Fallo en autenticacion"})
+            }else{
+                req.userId = decoded.id;
+                next()
+            }
+        })
+    }
+}
+
+app.get('/auth',verifyJWT,(req,res) => {
+    res.send("Autenticado");
+})
+
 app.get('/login',(req,res) => {
     console.log(req.session)
     if(req.session.usuario){
@@ -61,11 +83,18 @@ app.post('/login',(req,res) => {
         if (result.length > 0){
             if(result[0].password.length < 16){
                 if (result[0].password === clave){
-                    req.session.usuario = result[0].usuario;
-                    console.log(req.session);
-                    req.session.save();
-                    res.send(result);
-                    //var ses = req.session;
+                    if(response){
+                        const id = result[0].idUsuario;
+                        const token = jwt.sign({id},"jwtSecret",{
+                            expiresIn: 300,
+                        })
+                        req.session.usuario = result[0].usuario;
+                        console.log(req.session);
+                        //req.session.save();
+                        res.json({auth: true, token: token, result: result,data: result,usuario: result[0].usuario})
+                    }else{
+                        res.send(result);
+                    }
                 }else{
                     res.send({message: "Combinacion incorrecta"})
                     console.log("Combinacion incorrecta")
