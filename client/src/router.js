@@ -16,18 +16,21 @@ const ruteo = () => {
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className="nav-item">
-                    <Link to="rutas" className="nav-item">
+                    <Link to="/rutas" className="nav-item">
                         <a className="nav-link active" aria-current="page">Rutas</a>
                     </Link>
                     </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="">Buses</a>
+                    <li  className="nav-item">
+                        <Link to="/buses" className="nav-item">
+                        <a className="nav-link active" aria-current="page">Buses</a>
+                        </Link>
                     </li>
                 </ul>
             </div>
             </div>
         </nav>
             <Route path="/app/rutas" render={(props) => <Rutas/>}></Route>
+            <Route path="/app/Bus" render={(props) => <buses/>}></Route>
 
         </Router>
     );
