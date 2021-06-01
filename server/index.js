@@ -11,14 +11,86 @@ app.use(express.json());
 app.set('trust proxy', 1) 
 app.use(cors({
     origin: ["http://localhost:3000"],
-    methods: ["POST","GET","HEAD"],
+    methods: ["POST","GET","HEAD","DELETE","PUT"] ,
     credentials: true,
 }));
+
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
+//buses 
 
+app.post("/RegistrarBus", (req, res) => {
+    const idTipoBus = req.body.tipoBus;
+    const placa = req.body.placa;
+    console.log(req.body.placa)
+    db.query(
+      "INSERT INTO bus ( idTipoBus,placa) VALUES (?,?)",
+      [idTipoBus, placa],
+      (err, result) => {
+        if (err) {
+         // console.log(err);
+        } else {
+          console.log("values inserted");
+          res.send("Values inserted");
+        }
+      }
+    );
+  });
 
+app.get("/listaBus", (req, res) => {
+    db.query("SELECT b.idBus as idBus,tb.nombre as nombre ,b.placa as placa,b.idTipoBus as idTipoBus  FROM tipoBus tb INNER JOIN bus b ON tb.idTipoBus = b.idTipoBus;", (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+  });
+  app.get("/DatosBus/:idBus", (req, res) => {
+    const idBus = req.params.idBus;
+    console.log(req.params.idBus)
+    db.query("SELECT *  FROM bus WHERE idBus = ?;",idBus,(err,result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+  });
 
+app.put("/UpdateBus", (req, res) => {
+    console.log (req.body)
+    const idBus = req.body.idBus;
+    const idTipoBus = req.body.idTipoBus;
+    const placa = req.body.placa;
+
+    db.query(
+      "UPDATE bus SET placa = ? , idTipoBus = ? where idBus = ?",
+      [placa, idTipoBus,idBus],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      }
+    );
+  });
+  
+
+  app.delete("/delete/:idBus", (req, res) => {
+    console.log(req.params);
+    const idBus = req.params.idBus;
+  
+    db.query("DELETE FROM bus WHERE idBus = ?", idBus, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+  });
 app.use(
     session({
         key: "userId",
@@ -89,6 +161,8 @@ app.post('/login',(req,res) => {
     })
 })
 
+
+  
 app.listen(3001,() => {
     console.log('Servidor activo en puerto 3001');
 })
