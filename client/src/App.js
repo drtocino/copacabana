@@ -2,6 +2,7 @@ import {BrowserRouter as Router,Switch, Route} from 'react-router-dom';
 import React, {useEffect} from 'react'
 import './App.css';
 import Login from './components/login';
+import Buses from  './components/Bus';
 import Rutas from './components/rutas';
 import Inicio from './components/inicio';
 import Routing from './router'
@@ -34,5 +35,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;
