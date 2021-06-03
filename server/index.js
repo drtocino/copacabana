@@ -72,6 +72,18 @@ app.get('/login',(req,res) => {
     }
 });
 
+app.get('/listaRutas',(req,res) => {
+    const listaRutas = "SELECT r.precio,des.destino,sal.salida,b.placa,tb.nombre AS tipoBus,des.llegada,sal.partida FROM ruta r LEFT JOIN (SELECT l.nombre AS destino, d.fechaHora AS llegada,d.idDestino FROM lugar l INNER JOIN destino d ON l.idLugar = d.idLugar ) des ON r.idDestino = des.idDestino LEFT JOIN (SELECT l.nombre AS salida, s.fechaHora AS partida,s.idSalida FROM lugar l INNER JOIN salida s ON l.idLugar = s.idLugar) sal ON r.idSalida = sal.idSalida LEFT JOIN bus b ON r.idBus = b.idBus INNER JOIN tipoBus tb ON b.idTipoBus = tb.idTipoBus;";
+    db.query(listaRutas,(error,result) => {
+        if(error){
+            console.log(error);
+        }
+        if(result.length > 0){
+            res.send(result)
+        }
+    });
+});
+
 app.post('/login',(req,res) => {
     const usuario = req.body.usuario;
     const clave = req.body.clave;
