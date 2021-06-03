@@ -70,11 +70,12 @@ const Login = () => {
                 clave: clave,
             }).then((response) => {
                 if(response.data.message){
+                    setLog(false)
                     setIntentos(intentos + 1)
                     if(intentos <= 3){
                         swal.fire({
                             title: 'Error',
-                            icon: 'warning',
+                            icon: 'warning', 
                             html: 'Usuario y/o clave incorrectos, vas '+intentos+' intentos',
                             confirmButtonText: 'Volver a Intentar',
                             confirmButtonColor: '#00bc8c',
@@ -89,11 +90,16 @@ const Login = () => {
                         });
                     }
                 }else{
-                    setLog(true);
+                    setLog(true)
+                    if(response.data[0]){
+                        setLog(true);
+                        setLogin(response.data[0].usuario);
+                        console.log(response.data[0])
+                        console.log(login)
+                    }else{
+                        console.log(response.response)
+                    }
                     history.push('/app')
-                    setLogin(response.data[0].usuario);
-                    console.log(response.data[0])
-                    console.log(login)
                 }
             });
         }
@@ -106,22 +112,41 @@ const Login = () => {
     }, [])
 
     return (
-        <div className="d-flex justify-content-center text-center m-3">
-        <div className="bg-white text-dark p-3 rounded">
-        <form className="was-validated">
-            <h3 className="p-3 border border-danger text-danger rounded">Autenticación</h3>
-            <div className="form-group mt-3">
-                <label>Usuario</label>
-                <input type="text" className="form-control" placeholder="Ingresa tu Usuario" onChange={(e) => {setUsuario(e.target.value)}} required/>
+        <div>
+            <h3 className="d-flex justify-content-center p-3 text-danger rounded">Inicio de Sesion</h3>
+            <div className="d-flex justify-content-center text-center m-3">
+            <div className="bg-white text-dark p-3 rounded">
+            <form className="was-validated">
+                <div className="form-group mt-3">
+                    <div className="row">
+                        <div className="col-sm-4">
+                            <label>Usuario</label>
+                        </div>
+                        <div className="col-sm-8">
+                            <input type="text" className="form-control" placeholder="Usuario" onChange={(e) => {setUsuario(e.target.value)}} required/>
+                        </div>
+                    </div>
+                </div>
+                <div className="form-group mt-3">
+                    <div className="row">
+                        <div className="col-sm-4">
+                            <label>Clave</label>
+                        </div>
+                        <div className="col-sm-8">
+                            <input type="password" className="form-control" placeholder="Clave" onChange={(e) => {setClave(e.target.value)}} required/>
+                        </div>
+                    </div>
+                </div>
+                <button className="btn btn-danger mt-3" onClick={verificar}>Log In</button>
+                <link to></link>
+            </form>
+            {log && (
+                <div className="bg-success p-1">
+                    Exito
+                </div>
+            )}
             </div>
-            <div className="form-group mt-3">
-                <label>Clave</label>
-                <input type="password" className="form-control" placeholder="Ingresa tu clave" onChange={(e) => {setClave(e.target.value)}} required/>
             </div>
-            <button className="btn btn-danger mt-3" onClick={verificar}>Verificar</button>
-            <link to></link>
-        </form>
-        </div>
         </div>
     );
 }
