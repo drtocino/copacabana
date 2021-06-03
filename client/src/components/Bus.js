@@ -1,8 +1,8 @@
 import React,{useEffect, useState} from 'react';
 import axios from 'axios';
 import swal from 'sweetalert2'
-import EditBus from './EditBus'
-import Modal from 'react-modal';
+//import EditBus from './EditBus'
+//import Modal from 'react-modal';
 //import 'sweetalert2/src/sweetalert2.scss'
 //import Swal from 'sweetalert2/dist/sweetalert2.js'
 //import { Link } from "react-router-dom";
@@ -101,6 +101,7 @@ const Buses = () => {
      useEffect(() => {
         axios.get('http://localhost:3001/listaBus').then((response) => {
           setBuses(response.data);
+          console.log(response.data)
         });
       },[]);
 
@@ -144,13 +145,13 @@ const Buses = () => {
         <div>
         <h1 className="text-center">Buses</h1>
         <button onClick={crear} className="btn btn-primary">Nuevo Bus</button>
-        <table class="table table-hover table-striped">
+        <table className="table table-hover table-striped">
        
-          <thead class="thead-dark">
-                    <tr>
-                            <th scope="col">Tipo Bus </th>
-                            <th scope="col">Placa</th>
-                    </tr>
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">Tipo Bus </th>
+              <th scope="col">Placa</th>
+            </tr>
                   
           </thead>
           <tbody>
@@ -161,10 +162,10 @@ const Buses = () => {
                     <td>{val.nombre}</td>
                     <td>{val.placa}</td>
                     <td>
-                        <button class="btn btn-outline-info" onClick={() =>{setActualizar(true);setIdBus(val.idBus);setIdTipoBus(val.idTipoBus);setPlaca(val.placa)}}>Edit</button>
+                        <button className="btn btn-outline-info" onClick={() =>{setActualizar(true);setIdBus(val.idBus);setIdTipoBus(val.idTipoBus);setPlaca(val.placa)}}>Edit</button>
                     </td>
                     <td>
-                    <button class="btn btn-outline-danger" onClick={() => onDelete(val.idBus)}> Delete </button>
+                    <button className="btn btn-outline-danger" onClick={() => onDelete(val.idBus)}> Delete </button>
                     </td>
                 </tr>
                 )
@@ -173,23 +174,23 @@ const Buses = () => {
 
                 }
           </tbody>
-          <button onClick={enviarDatos}>Confirmar</button>
         </table>
+          <button onClick={enviarDatos}>Confirmar</button>
         {actualizar === true ? 
           <div>
-            <div class="form-row justify-content-center">
-              <div class="form-group col-md-6">
+            <div className="form-row justify-content-center">
+              <div className="form-group col-md-6">
                 <label >Tipo Bus</label>
-                <input type="text" class="form-control"  placeholder="tipoBus"
+                <input type="text" className="form-control"  placeholder="tipoBus"
                   value={idTipoBus} onChange={(value)=> setIdTipoBus(value.target.value)}/>
               </div>
               <div class="form-group col-md-6">
                 <label >placa</label>
-                <input type="text" class="form-control"  placeholder="Email"
+                <input type="text" className="form-control"  placeholder="Email"
                   value={placa} onChange={(value)=> setPlaca(value.target.value)}/>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary" onClick={()=>sendUpdate()}>Update</button>
+            <button type="submit" className="btn btn-primary" onClick={()=>sendUpdate()}>Update</button>
           </div>
           :
           "actualizar"
