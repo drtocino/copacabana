@@ -41,7 +41,7 @@ app.post("/RegistrarBus", (req, res) => {
   });
 
 app.get("/listaBus", (req, res) => {
-    db.query("SELECT b.idBus as idBus,tb.nombre as nombre ,b.placa as placa,b.idTipoBus as idTipoBus  FROM tipoBus tb INNER JOIN bus b ON tb.idTipoBus = b.idTipoBus;", (err, result) => {
+    db.query("SELECT b.idBus as idBus,tb.nombre as nombre ,b.placa as placa,b.idTipoBus as idTipoBus FROM tipoBus tb INNER JOIN bus b ON tb.idTipoBus = b.idTipoBus;", (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -145,7 +145,7 @@ app.get('/login',(req,res) => {
 });
 
 app.get('/listaRutas',(req,res) => {
-    const listaRutas = "SELECT r.precio,des.destino,sal.salida,b.placa,tb.nombre AS tipoBus,des.llegada,sal.partida FROM ruta r LEFT JOIN (SELECT l.nombre AS destino, d.fechaHora AS llegada,d.idDestino FROM lugar l INNER JOIN destino d ON l.idLugar = d.idLugar ) des ON r.idDestino = des.idDestino LEFT JOIN (SELECT l.nombre AS salida, s.fechaHora AS partida,s.idSalida FROM lugar l INNER JOIN salida s ON l.idLugar = s.idLugar) sal ON r.idSalida = sal.idSalida LEFT JOIN bus b ON r.idBus = b.idBus INNER JOIN tipoBus tb ON b.idTipoBus = tb.idTipoBus;";
+    const listaRutas = "SELECT r.idRuta,r.precio,des.destino,sal.salida,b.placa,tb.nombre AS tipoBus,des.llegada,sal.partida FROM ruta r LEFT JOIN (SELECT l.nombre AS destino, d.fechaHora AS llegada,d.idDestino FROM lugar l INNER JOIN destino d ON l.idLugar = d.idLugar ) des ON r.idDestino = des.idDestino LEFT JOIN (SELECT l.nombre AS salida, s.fechaHora AS partida,s.idSalida FROM lugar l INNER JOIN salida s ON l.idLugar = s.idLugar) sal ON r.idSalida = sal.idSalida LEFT JOIN bus b ON r.idBus = b.idBus INNER JOIN tipoBus tb ON b.idTipoBus = tb.idTipoBus;";
     db.query(listaRutas,(error,result) => {
         if(error){
             console.log(error);
@@ -155,6 +155,66 @@ app.get('/listaRutas',(req,res) => {
         }
     });
 });
+
+app.post('/RegistrarRuta',(req,res) => {
+    const partida = req.body.partida;
+    const llegada = req.body.llegada;
+    const salida = req.body.salida;
+    const destino = req.body.destino;
+    const precio = req.body.precio;
+    const bus = req.body.bus;
+    
+    console.log(req.body)
+    const crearRuta = "INSERT INTO ruta VALUES (null,?,?,?,?)";
+    const crearSalida = "INSERT INTO salida VALUES (null,?,?)";
+    const crearDestino = "INSERT INTO destino VALUES (null,?,?)";
+    db.query(crearSalida,[salida,partida],(er,resu) => {
+        if(er){
+            console.log("Ocurrio un error -> "+er)
+        }else{
+            db.query(crearDestino,[destino,llegada],(err,resul) => {
+                if(err){
+                    console.log("Ocurrio un error -> "+err)
+                }else{
+                    const sal = resu.insertId
+                    const des = resul.insertId
+                    db.query(crearRuta,[sal,des,bus,precio],(error,resulta) => {
+                        if(error){
+                            console.log("Ocurrio un error -> "+error)
+                        }else{
+                            console.log(resulta)
+                            res.send(resulta);
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.get('/listaLugares',(req,res) => {
+    const listaLugar = "SELECT * FROM lugar;";
+    db.query(listaLugar,(error,result) => {
+        if(error){
+            console.log(error);
+        }
+        if(result.length > 0){
+            res.send(result)
+        }
+    });
+});
+
+/*app.get('/listaBuses',(req,res) => {
+    const listaBuses = "SELECT * FROM bus;";
+    db.query(listaBuses,(error,result) => {
+        if(error){
+            console.log(error);
+        }
+        if(result.length > 0){
+            res.send(result)
+        }
+    });
+});*/
 
 app.post('/login',(req,res) => {
     const usuario = req.body.usuario;
@@ -202,7 +262,83 @@ app.post('/login',(req,res) => {
     })
 })
 
+app.get('/listausuario',(req,res) => {
+  const user = "SELECT *, concat_ws(' ', nombres, apellidos) as nombre FROM usuario";
+  db.query(user,(error,result) => {
+      if(error){
+          console.log("Ocurrio un error -> "+error)
+      }else{
+          console.log(result)
+          res.send(result);
+      }
+  })
+});
 
+app.get('/listatipousuario',(req,res) => {
+  const user = "SELECT * FROM rol";
+  db.query(user,(error,result) => {
+      if(error){
+          console.log("Ocurrio un error -> "+error)
+      }else{
+          console.log(result)
+          res.send(result);
+      }
+  })
+});
+
+
+app.post('/registrarusuario',(req,res) => {
+  const nombre = req.body.nombre;
+  const apellido = req.body.apellido;
+  const user = req.body.user;
+  const password = req.body.password;
+  const rol = req.body.rol;
+  
+  console.log(req.body)
+  const consulta = "INSERT INTO usuario VALUES (null, ?,?, ?, ?, ?)";
+  db.query(consulta,[rol,nombre,apellido,user,password],(error,result) => {
+      if(error){
+          console.log("Ocurrio un error -> "+error)
+      }else{
+          console.log(result)
+          res.send(result);
+      }
+  })
+});
+
+app.post('/editarusuario/:idUsuario',(req,res) => {
+  const idUsuario = req.params.idUsuario;
+  const nombre = req.body.nombre;
+  const apellido = req.body.apellido;
+  const user = req.body.user;
+  const password = req.body.password;
+  
+  console.log(req.body)
+  const consulta = "UPDATE usuario SET nombres = 'lola' WHERE idUsuario = ?";
+  // const consulta = "UPDATE usuario SET nombres = ? OR apellido = ? OR usuario = ? OR password = ?  WHERE idUsuario = ?";
+  db.query(consulta,idUsuario,[nombre,apellido,user,password],(error,result) => {
+  // db.query(consulta,idUsuario,(error,result) => {
+      if(error){
+          console.log("Ocurrio un error -> "+error)
+      }else{
+          console.log(result)
+          res.send(result);
+      }
+  })
+});
+
+app.delete('/eliminarusuario/:idUsuario',(req,res) => {
+  const idUsuario = req.params.idUsuario;
+  const user = "DELETE FROM usuario WHERE idUsuario = ?";
+  db.query(user,idUsuario,(error,result) => {
+      if(error){
+          console.log("Ocurrio un error -> "+error)
+      }else{
+          console.log(result)
+          res.send(result);
+      }
+  })
+});
   
 app.listen(3001,() => {
     console.log('Servidor activo en puerto 3001');

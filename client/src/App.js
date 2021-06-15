@@ -3,10 +3,11 @@ import React, {useEffect} from 'react'
 import './App.css';
 import Login from './components/login';
 import Buses from  './components/Bus';
-import Rutas from './components/rutas';
+import Rutas from './components/Rutas';
 import Inicio from './components/inicio';
 import Routing from './router'
-import 'bootswatch/dist/darkly/bootstrap.min.css';
+import 'bootswatch/dist/darkly/bootstrap.css';
+import Usuario from './components/Usuario';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
               <Route exact path="/app" component={Inicio}/>
               <Route exact path="/app/rutas" component={Rutas}/>
               <Route exact path="/app/buses" component={Buses}/>
+              <Route exact path="/app/usuario" component={Usuario}/>
             </Switch>
           </div>
         }

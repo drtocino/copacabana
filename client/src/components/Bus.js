@@ -1,6 +1,7 @@
 import React,{useEffect, useState} from 'react';
 import axios from 'axios';
-import swal from 'sweetalert2'
+import swal from 'sweetalert2';
+import {FiTrash,FiEdit} from 'react-icons/fi';
 //import EditBus from './EditBus'
 //import Modal from 'react-modal';
 //import 'sweetalert2/src/sweetalert2.scss'
@@ -32,7 +33,13 @@ const Buses = () => {
         preConfirm : () =>{
             setPlaca ( document.getElementById('placa').value)
             setTipoBus ( document.getElementById('tipoBus').value)
-           
+            axios.post('http://localhost:3001/RegistrarBus',{
+                tipoBus : document.getElementById('placa').value,
+                placa : document.getElementById('tipoBus').value,    
+            })
+            .then ((response)=>{
+                console.log(response.data.message)
+            })
             return [
               
             ]
@@ -142,15 +149,15 @@ const Buses = () => {
       }
       
       return (
-        <div>
+        <div className="container rounded bg-white text-dark mt-3 p-3">
+        <button onClick={crear} className="btn btn-primary float-end">Nuevo Bus</button>
         <h1 className="text-center">Buses</h1>
-        <button onClick={crear} className="btn btn-primary">Nuevo Bus</button>
-        <table className="table table-hover table-striped">
-       
-          <thead className="thead-dark">
+        <table className="table table-hover table-striped table-white table-sm">
+          <thead className="thead-dark bg-dark text-white">
             <tr>
-              <th scope="col">Tipo Bus </th>
-              <th scope="col">Placa</th>
+              <th>Tipo Bus </th>
+              <th>Placa</th>
+              <th className="w-25"></th>
             </tr>
                   
           </thead>
@@ -158,14 +165,14 @@ const Buses = () => {
             { 
                 buses.map((val)=>{
                     return(
-                 <tr>
+                <tr className="m-0 align-middle text-dark">
                     <td>{val.nombre}</td>
                     <td>{val.placa}</td>
                     <td>
-                        <button className="btn btn-outline-info" onClick={() =>{setActualizar(true);setIdBus(val.idBus);setIdTipoBus(val.idTipoBus);setPlaca(val.placa)}}>Edit</button>
-                    </td>
-                    <td>
-                    <button className="btn btn-outline-danger" onClick={() => onDelete(val.idBus)}> Delete </button>
+                      <div className="btn-group float-end">
+                        <button className="btn text-info border-0 bg-transparent" onClick={() =>{setActualizar(true);setIdBus(val.idBus);setIdTipoBus(val.idTipoBus);setPlaca(val.placa)}}><FiEdit size={22}/></button>
+                        <button className="btn text-danger border-0 bg-transparent" onClick={() => onDelete(val.idBus)}><FiTrash size={22}/> </button>
+                      </div>
                     </td>
                 </tr>
                 )
@@ -175,7 +182,7 @@ const Buses = () => {
                 }
           </tbody>
         </table>
-          <button onClick={enviarDatos}>Confirmar</button>
+          <button onClick={enviarDatos} className="btn btn-info">Confirmar</button>
         {actualizar === true ? 
           <div>
             <div className="form-row justify-content-center">
