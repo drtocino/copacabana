@@ -21,6 +21,11 @@ const Ruteo = () => {
                         Rutas
                     </NavLink>
                     </li>
+                    <li className={"nav-item"}>
+                    <NavLink to="/app/lugar" className="nav-link">
+                        Lugares
+                    </NavLink>
+                    </li>
                     <li className="nav-item">
                     <NavLink to="/app/buses" className="nav-link">
                         Buses
