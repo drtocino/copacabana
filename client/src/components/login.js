@@ -14,45 +14,45 @@ const Login = () => {
 
     axios.defaults.withCredentials = true;
 
-    const autenticacion = (e) => {
-        e.preventDefault();
-        if(usuario === "" || clave === ""){
-            swal.fire({
-                title: 'Error',
-                icon: 'warning',
-                html: 'El campo usuario y/o clave estan vacios',
-                confirmButtonText: 'Volver a Intentar',
-                confirmButtonColor: '#f39c12',
-            });
-        }else{
-            axios.get(`http://192.168.1.10:3001/login/${usuario}&${clave}`)
-            .then((response) => {
-                console.log(response.data)
-                if(response.data[0]){
-                    alert("Correcto");
-                }else{
-                    setIntentos(intentos + 1)
-                    if(intentos <= 3){
-                        swal.fire({
-                            title: 'Error',
-                            icon: 'warning',
-                            html: 'Usuario y/o clave incorrectos, vas '+intentos+' intentos',
-                            confirmButtonText: 'Volver a Intentar',
-                            confirmButtonColor: '#00bc8c',
-                        });
-                    }else{
-                        swal.fire({
-                            title: 'Error',
-                            icon: 'error',
-                            html: 'Se alcanzo el numero maximo de intentos espere 30 minutos para volver a intentar o converse con un administrador',
-                            confirmButtonText: 'De acuerdo',
-                            confirmButtonColor: '#e74c3c',
-                        });
-                    }
-                }
-            });  
-        }
-    }
+    // const autenticacion = (e) => {
+    //     e.preventDefault();
+    //     if(usuario === "" || clave === ""){
+    //         swal.fire({
+    //             title: 'Error',
+    //             icon: 'warning',
+    //             html: 'El campo usuario y/o clave estan vacios',
+    //             confirmButtonText: 'Volver a Intentar',
+    //             confirmButtonColor: '#f39c12',
+    //         });
+    //     }else{
+    //         axios.get(`http://192.168.1.7:3001/login/${usuario}&${clave}`)
+    //         .then((response) => {
+    //             console.log(response.data)
+    //             if(response.data[0]){
+    //                 alert("Correcto");
+    //             }else{
+    //                 setIntentos(intentos + 1)
+    //                 if(intentos <= 3){
+    //                     swal.fire({
+    //                         title: 'Error',
+    //                         icon: 'warning',
+    //                         html: 'Usuario y/o clave incorrectos, vas '+intentos+' intentos',
+    //                         confirmButtonText: 'Volver a Intentar',
+    //                         confirmButtonColor: '#00bc8c',
+    //                     });
+    //                 }else{
+    //                     swal.fire({
+    //                         title: 'Error',
+    //                         icon: 'error',
+    //                         html: 'Se alcanzo el numero maximo de intentos espere 30 minutos para volver a intentar o converse con un administrador',
+    //                         confirmButtonText: 'De acuerdo',
+    //                         confirmButtonColor: '#e74c3c',
+    //                     });
+    //                 }
+    //             }
+    //         });  
+    //     }
+    // }
 
     const verificar = (e) => {
         e.preventDefault()
@@ -65,7 +65,7 @@ const Login = () => {
                 confirmButtonColor: '#f39c12',
             });
         }else{
-            axios.post('http://192.168.1.10:3001/login',{
+            axios.post('http://192.168.1.7:3001/login',{
                 usuario: usuario,
                 clave: clave,
             }).then((response) => {
@@ -106,7 +106,7 @@ const Login = () => {
     }
 
     useEffect(() => {
-        axios.get("http://192.168.1.10:3001/login").then((response) => {
+        axios.get("http://192.168.1.7:3001/login").then((response) => {
             console.log(response)
         })
     }, [])

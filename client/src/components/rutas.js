@@ -11,13 +11,13 @@ const Rutas = () => {
     const [buses, setBuses] = useState([]);
 
     useEffect(() => {
-        axios.get('http://192.168.1.10:3001/listaRutas').then((response) => {
+        axios.get('http://localhost:3001/listaRutas').then((response) => {
             setRutas(response.data);
         });
-        axios.get('http://192.168.1.10:3001/listaLugares').then((response) => {
+        axios.get('http://localhost:3001/listaLugares').then((response) => {
             setLugares(response.data);
         });
-        axios.get('http://192.168.1.10:3001/listaBus').then((response) => {
+        axios.get('http://localhost:3001/listaBus').then((response) => {
             setBuses(response.data);
         });
     }, [])
@@ -129,7 +129,7 @@ const Rutas = () => {
                     }
                     return false;
                 }else{
-                    axios.post('http://192.168.1.10:3001/RegistrarRuta',{
+                    axios.post('http://localhost:3001/RegistrarRuta',{
                         partida: partida.value,
                         llegada: llegada.value,
                         salida: salida.value,
@@ -142,7 +142,7 @@ const Rutas = () => {
                             icon: 'success',
                             html: 'Se completo el registro satisfactoriamente!'
                         })
-                        axios.get('http://192.168.1.10:3001/listaRutas').then((response) => {
+                        axios.get('http://localhost:3001/listaRutas').then((response) => {
                             setRutas(response.data);
                         });
                     })
@@ -153,8 +153,8 @@ const Rutas = () => {
         })
     }
 
-    const editarRuta = (id,sal,des,partida,llegada,bus,precio) => {
-        console.log(partida)
+    const editarRuta = (id,sal,des,partida,llegada,idBus,precio) => {
+        //console.log(partida)
         swal.fire({
             title: 'Editar Ruta',
             html:
@@ -214,30 +214,87 @@ const Rutas = () => {
                 var salida = document.getElementById('salida');
                 var destino = document.getElementById('destino');
                 var bus = document.getElementById('bus');
+                console.log(id)
                 lugares.map((val) => {
                     var optSal = document.createElement('option')
                     var optDes = document.createElement('option')
                     optSal.appendChild(document.createTextNode(val.nombre+" ("+val.nombreTerminal+")"))
-                    console.log(sal +" "+val.idLugar)
-                    if(sal == val.idLugar)
+                    if(sal === val.idLugar)
                         optSal.defaultSelected = true
+                    if(des === val.idLugar)
+                        optDes.defaultSelected = true
                     optDes.appendChild(document.createTextNode(val.nombre+" ("+val.nombreTerminal+")"))
                     optSal.value = val.idLugar
                     optDes.value = val.idLugar
                     salida.appendChild(optSal)
                     destino.appendChild(optDes)
+                    return 1
                 })
                 buses.map((val) => {
                     var option = document.createElement('option')
                     option.appendChild(document.createTextNode(val.nombre+ " - " + val.placa))
                     option.value = val.idBus
                     bus.appendChild(option)
+                    if(idBus === val.idBus)
+                        option.defaultSelected = true
+                    return 1
                 })
             },
+            preConfirm: () => {
+                var partida = document.getElementById('partida');
+                var llegada = document.getElementById('llegada');
+                var precio = document.getElementById('precio');
+                var salida = document.getElementById('salida');
+                var destino = document.getElementById('destino');
+                var bus = document.getElementById('bus');
+                var partidaVal = document.getElementById('partida-val');
+                var llegadaVal = document.getElementById('llegada-val');
+                var precioVal = document.getElementById('precio-val');
+                if(!precio.value || !llegada.value || !partida.value){
+                    if(!partida.value){
+                        partida.style.borderColor = "#f54242";
+                        partida.style.boxShadow = "0 0 0 .25rem #f5424259";
+                        partidaVal.style.display = "block";
+                        partida.focus();
+                    }
+                    if(!llegada.value){
+                        llegada.style.borderColor = "#f54242";
+                        llegada.style.boxShadow = "0 0 0 .25rem #f5424259";
+                        llegadaVal.style.display = "block";
+                        llegada.focus();
+                    }
+                    if (!precio.value){
+                        precio.style.borderColor = "#f54242";
+                        precio.style.boxShadow = "0 0 0 .25rem #f5424259";
+                        precioVal.style.display = "block";
+                        precio.focus();
+                    }
+                    return false;
+                }else{
+                    axios.put('http://localhost:3001/EditarRuta',{
+                        /*partida: partida.value,
+                        llegada: llegada.value,
+                        salida: salida.value,
+                        destino: destino.value,*/
+                        idRuta: id,
+                        precio: precio.value,
+                        bus: bus.value,
+                    }).then((response) => {
+                        swal.fire({
+                            title: 'Registrado',
+                            icon: 'success',
+                            html: 'Se completo el registro satisfactoriamente!'
+                        })
+                        axios.get('http://localhost:3001/listaRutas').then((response) => {
+                            setRutas(response.data);
+                        });
+                    })
+                }
+            }
         })
     }
 
-    const eliminarRuta = () => {
+    const eliminarRuta = (idRuta) => {
         swal.fire({
             title: 'Eliminar Ruta',
             icon: 'warning',
@@ -248,7 +305,18 @@ const Rutas = () => {
             cancelButtonText: 'Cancelar',
             reverseButtons: true,
         }).then(() => {
-
+            axios.put('http://localhost:3001/eliminarRuta',{
+                idRuta: idRuta,
+            }).then(() => {
+                swal.fire({
+                    title: 'Eliminado',
+                    icon: 'success',
+                    html: 'Se elimino la ruta con exito'
+                })
+                axios.get('http://localhost:3001/listaRutas').then((response) => {
+                    setRutas(response.data);
+                });
+            })
         });
     }
     
@@ -257,46 +325,49 @@ const Rutas = () => {
             <h1 className="text-center">Rutas
             <button className="btn btn-primary btn-sm float-end mb-3" onClick={nuevaRuta}>Nueva Ruta</button>
             </h1>
-            <table className="table table-hover table-striped table-white table-sm">
-                <thead className="thead-dark bg-dark text-white">
-                    <tr>
-                        <td>Salida</td>
-                        <td>Destino</td>
-                        <td>Partida</td>
-                        <td>Llegada</td>
-                        <td>Bus</td>
-                        <td>Precio</td>
-                        <td></td>
-                    </tr>
-                </thead>
-                <tbody>
-                {rutas.map((val) => {
-                    var par = new Date(val.partida)
-                    var lle = new Date(val.llegada)
-                    var part = String(par.getDate()).padStart(2,'0') + "/" + (String(par.getMonth() + 1).padStart(2,'0')) + "/" + par.getFullYear() + " " + par.getHours() + ":" + par.getMinutes() + ":" + par.getSeconds();
-                    var start = par.getFullYear() + "-" + String(par.getMonth() + 1).padStart(2,'0') + "-" + String(par.getDate()).padStart(2,'0') + "T" + String(par.getHours()).padStart(2,'0') + ":" + String(par.getMinutes()).padStart(2,'0')
-                    var lleg = String(lle.getDate()).padStart(2,'0') + "/" + (String(lle.getMonth() + 1).padStart(2,'0')) + "/" + lle.getFullYear() + " " + lle.getHours() + ":" + lle.getMinutes() + ":" + lle.getSeconds();
-                    var end = lle.getFullYear() + "-" + String(lle.getMonth() + 1).padStart(2,'0') + "-" + String(lle.getDate()).padStart(2,'0') + "T" + String(lle.getHours()).padStart(2,'0') + ":" + String(lle.getMinutes()).padStart(2,'0')
-                    return (
-                        <tr key={val.idRuta} className="m-0 align-middle text-dark">
-                            <td>{val.salida}</td>
-                            <td>{val.destino}</td>
-                            <td>{part}</td>
-                            <td>{lleg}</td>
-                            <td>{val.tipoBus}</td>
-                            <td>{val.precio}</td>
-                            <td className="">
-                                <div className="btn-group float-end">
-                                    <button className="btn text-info border-0 bg-transparent" onClick={() => editarRuta(val.idRuta,val.salida,val.destino,start,end,val.bus,val.precio)}><FiEdit className="m-0" size={22} /></button>
-                                    <button className="btn text-danger border-0 bg-transparent" onClick={() => eliminarRuta()}><FiTrash size={22} /></button>
-                                </div>
-                            </td>
+            <div className="table-responsive">
+                <table className="table table-hover table-striped table-white table-sm">
+                    <thead className="thead-dark bg-dark text-white">
+                        <tr>
+                            <td>Salida</td>
+                            <td>Destino</td>
+                            <td>Partida</td>
+                            <td>Llegada</td>
+                            <td>Bus</td>
+                            <td>Precio</td>
+                            <td></td>
                         </tr>
-                    )
-                })
-                }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {rutas.map((val) => {
+                        console.log(val)
+                        var par = new Date(val.partida)
+                        var lle = new Date(val.llegada)
+                        var part = String(par.getDate()).padStart(2,'0') + "/" + (String(par.getMonth() + 1).padStart(2,'0')) + "/" + par.getFullYear() + " " + String(par.getHours()).padStart(2,'0') + ":" + String(par.getMinutes()).padStart(2,'0') + ":" + String(par.getSeconds()).padStart(2,'0');
+                        var start = par.getFullYear() + "-" + String(par.getMonth() + 1).padStart(2,'0') + "-" + String(par.getDate()).padStart(2,'0') + "T" + String(par.getHours()).padStart(2,'0') + ":" + String(par.getMinutes()).padStart(2,'0')
+                        var lleg = String(lle.getDate()).padStart(2,'0') + "/" + (String(lle.getMonth() + 1).padStart(2,'0')) + "/" + lle.getFullYear() + " " + String(lle.getHours()).padStart(2,'0') + ":" + String(lle.getMinutes()).padStart(2,'0') + ":" + String(lle.getSeconds()).padStart(2,'0');
+                        var end = lle.getFullYear() + "-" + String(lle.getMonth() + 1).padStart(2,'0') + "-" + String(lle.getDate()).padStart(2,'0') + "T" + String(lle.getHours()).padStart(2,'0') + ":" + String(lle.getMinutes()).padStart(2,'0')
+                        return (
+                            <tr key={val.idRuta} className="m-0 align-middle text-dark">
+                                <td>{val.salida}</td>
+                                <td>{val.destino}</td>
+                                <td>{part}</td>
+                                <td>{lleg}</td>
+                                <td>{val.tipoBus}</td>
+                                <td>{val.precio}</td>
+                                <td className="">
+                                    <div className="btn-group float-end">
+                                        <button className="btn text-info border-0 bg-transparent" onClick={() => editarRuta(val.idRuta,val.idLugarSal,val.idLugarDes,start,end,val.bus,val.precio)}><FiEdit className="m-0" size={22} /></button>
+                                        <button className="btn text-danger border-0 bg-transparent" onClick={() => eliminarRuta(val.idRuta)}><FiTrash size={22} /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        )
+                    })
+                    }
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

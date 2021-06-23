@@ -23,7 +23,7 @@ const Usuario = () => {
 
     useEffect(() => {
         //console.log("asd")
-        axios.get("http://192.168.1.10:3001/listausuario").then((response) => {
+        axios.get("http://localhost:3001/listausuario").then((response) => {
             setUsuarios(response.data)
         });
         // axios.get("http://192.168.0.17:3001/listatipousuario").then((response) => {
@@ -91,7 +91,7 @@ const Usuario = () => {
 
     const enviarDatos = () => {
         setConfirmar(false)
-        axios.post(`http://192.168.1.10:3001/registrarusuario`, {
+        axios.post(`http://localhost:3001/registrarusuario`, {
                 nombre: nombre,
                 apellido: apellido,
                 user: user,
@@ -165,7 +165,7 @@ const Usuario = () => {
 
     const enviarDatosEditados = (idUsuario) => {
         setConfirmarEditar(false)
-        axios.post(`http://192.168.1.10:3001/editarusuario/${idUsuario}`, {
+        axios.post(`http://localhost:3001/editarusuario/${idUsuario}`, {
                 nombre: nombre,
                 apellido: apellido,
                 user: user,
@@ -187,7 +187,7 @@ const Usuario = () => {
     })
         .then((result)=>{
             if (result.isConfirmed) {
-                axios.delete(`http://192.168.1.10:3001/eliminarusuario/${idUsuario}`)
+                axios.delete(`http://localhost:3001/eliminarusuario/${idUsuario}`)
 
             } else {
                 

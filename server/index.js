@@ -145,7 +145,7 @@ app.get('/login',(req,res) => {
 });
 
 app.get('/listaRutas',(req,res) => {
-    const listaRutas = "SELECT r.idRuta,r.precio,des.destino,sal.salida,b.placa,tb.nombre AS tipoBus,des.llegada,sal.partida FROM ruta r LEFT JOIN (SELECT l.nombre AS destino, d.fechaHora AS llegada,d.idDestino FROM lugar l INNER JOIN destino d ON l.idLugar = d.idLugar ) des ON r.idDestino = des.idDestino LEFT JOIN (SELECT l.nombre AS salida, s.fechaHora AS partida,s.idSalida FROM lugar l INNER JOIN salida s ON l.idLugar = s.idLugar) sal ON r.idSalida = sal.idSalida LEFT JOIN bus b ON r.idBus = b.idBus INNER JOIN tipoBus tb ON b.idTipoBus = tb.idTipoBus;";
+    const listaRutas = "SELECT r.idRuta,r.precio,des.destino,sal.salida,b.placa,tb.nombre AS tipoBus,des.llegada,sal.partida,des.idLugar as idLugarDes,sal.idLugar as idLugarSal FROM ruta r LEFT JOIN (SELECT l.nombre AS destino, d.fechaHora AS llegada,d.idDestino,d.idLugar FROM lugar l INNER JOIN destino d ON l.idLugar = d.idLugar ) des ON r.idDestino = des.idDestino LEFT JOIN (SELECT l.nombre AS salida, s.fechaHora AS partida,s.idSalida,s.idLugar FROM lugar l INNER JOIN salida s ON l.idLugar = s.idLugar) sal ON r.idSalida = sal.idSalida LEFT JOIN bus b ON r.idBus = b.idBus INNER JOIN tipoBus tb ON b.idTipoBus = tb.idTipoBus WHERE r.activo = 1;";
     db.query(listaRutas,(error,result) => {
         if(error){
             console.log(error);
@@ -165,7 +165,7 @@ app.post('/RegistrarRuta',(req,res) => {
     const bus = req.body.bus;
     
     console.log(req.body)
-    const crearRuta = "INSERT INTO ruta VALUES (null,?,?,?,?)";
+    const crearRuta = "INSERT INTO ruta VALUES (null,?,?,?,?,1)";
     const crearSalida = "INSERT INTO salida VALUES (null,?,?)";
     const crearDestino = "INSERT INTO destino VALUES (null,?,?)";
     db.query(crearSalida,[salida,partida],(er,resu) => {
@@ -190,6 +190,37 @@ app.post('/RegistrarRuta',(req,res) => {
             });
         }
     });
+});
+
+app.put("/eliminarRuta", (req, res) => {
+    const idRuta = req.body.idRuta;
+    const eliminarRuta = 'UPDATE ruta SET activo = 0 WHERE idRuta = ?;';
+
+    db.query(eliminarRuta,idRuta,(err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+      }
+    );
+});
+
+app.put("/EditarRuta", (req, res) => {
+    const idRuta = req.body.idRuta;
+    const precio = req.body.precio;
+    const bus = req.body.bus;
+    const eliminarRuta = 'UPDATE ruta SET idBus = ?, precio = ? WHERE idRuta = ?;';
+
+    db.query(eliminarRuta,[bus,precio,idRuta],(err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(result)
+            res.send(result);
+        }
+      }
+    );
 });
 
 app.get('/listaLugares',(req,res) => {
