@@ -108,9 +108,9 @@ app.use(
 
 const db = mysql.createPool({
     host: "127.0.0.1",
-    port: 3308,
+    port: 3306,
     user: "root",
-    password: "P@ssw0rd",
+    password: "root",
     database: "copacabana"
 });
 
@@ -221,6 +221,58 @@ app.put("/EditarRuta", (req, res) => {
         }
       }
     );
+});
+
+
+app.put("/EditarLugar", (req, res) => {
+    const idLugar = req.body.id;
+    const lugar = req.body.departamento;
+    const terminal = req.body.terminal;
+    const editarLugar = 'UPDATE lugar SET nombre = ?, nombreTerminal = ? WHERE idLugar = ?;';
+
+    db.query(editarLugar,[lugar,terminal,idLugar],(err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(result)
+            res.send(result);
+        }
+      }
+    );
+});
+
+app.put("/EliminarLugar", (req, res) => {
+    const idLugar = req.body.id;
+    
+    const eliminarLugar = 'DELETE FROM lugar WHERE idLugar = ?;';
+
+    db.query(eliminarLugar,idLugar,(err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(result)
+            res.send(result);
+        }
+      }
+    );
+});
+
+app.post('/RegistrarLugar',(req,res) => {
+    const departamento = req.body.departamento;
+    const terminal = req.body.terminal;
+    
+    
+    console.log(req.body)
+    const crearLugar = "INSERT INTO lugar VALUES (null,?,?)";
+
+    db.query(crearLugar,[departamento,terminal],(er,resu) => {
+        if(er){
+            console.log("Ocurrio un error -> "+er)
+        }else{
+            console.log(resu)
+            res.send(resu);
+        }
+    });
 });
 
 app.get('/listaLugares',(req,res) => {
