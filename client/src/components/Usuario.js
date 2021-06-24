@@ -7,12 +7,12 @@ const Usuario = () => {
     //const [usuario, setUsuario] = useState("");
     const [usuarios, setUsuarios] = useState([]);
     
-    const [nombre, setNombre] = useState("");
-    const [apellido, setApellido] = useState("");
-    const [user, setUser] = useState("");
-    const [password, setPassword] = useState("");
+    // const [nombre, setNombre] = useState("");
+    // const [apellido, setApellido] = useState("");
+    // const [user, setUser] = useState("");
+    // const [password, setPassword] = useState("");
 
-    const [rol, setRol] = useState("");
+    // const [rol, setRol] = useState("");
 
     const [confirmar, setConfirmar] = useState(false);
 
@@ -63,12 +63,25 @@ const Usuario = () => {
         
         '</div>',
         preConfirm: ()=>{
-            // setNombre ( document.getElementById('nombre').value)
-            // setApellido ( document.getElementById('apellido').value)
-            // setUser ( document.getElementById('user').value)
-            // setPassword ( document.getElementById('password').value)
-            // setRol ( document.getElementById('rol').value)
-            asignarDatos()
+            var nombre = document.getElementById('nombre').value
+            var apellido = document.getElementById('apellido').value
+            var user = document.getElementById('user').value
+            var password = document.getElementById('password').value
+            var rol = document.getElementById('rol').value
+            axios.post(`http://localhost:3001/registrarusuario`, {
+                nombre: nombre,
+                apellido: apellido,
+                user: user,
+                password: password,
+                rol: rol
+            })
+            .then((result)=>{
+                //console.log("Exito");
+                axios.get("http://localhost:3001/listausuario").then((response) => {
+                setUsuarios(response.data)
+        });
+            })
+            //asignarDatos()
         }
     })
     .then((result)=>{
@@ -81,58 +94,60 @@ const Usuario = () => {
     }
 
     const asignarDatos = () => {
-        setNombre ( document.getElementById('nombre').value) 
-        console.log(document.getElementById('nombre').value);
-        setApellido ( document.getElementById('apellido').value)
-        setUser ( document.getElementById('user').value)
-        setPassword ( document.getElementById('password').value)
-        setRol ( document.getElementById('rol').value)
+        // setNombre ( document.getElementById('nombre').value) 
+        // console.log(document.getElementById('nombre').value);
+        // setApellido ( document.getElementById('apellido').value)
+        // setUser ( document.getElementById('user').value)
+        // setPassword ( document.getElementById('password').value)
+        // setRol ( document.getElementById('rol').value)
     }
 
     const enviarDatos = () => {
-        setConfirmar(false)
-        axios.post(`http://localhost:3001/registrarusuario`, {
-                nombre: nombre,
-                apellido: apellido,
-                user: user,
-                password: password,
-                rol: rol
-            })
-            .then((result)=>{
-                console.log("Exito");
-            })
+
     }
 
-    const editarUsuario = (nom,user) => {
+    const editarUsuario = (id,nom,ape,us) => {
         // {usuarios.map((val)=>{
         console.log(nom)
         swal.fire({title: "Editar Registro de Usuarios",
         html: '<div class="row form-group mt-3">' +
         '<label for="nombre" class="col-sm-4 col-form-label">Nombre(s)</label>' +
         '<div class="col-sm-8">' +
-        '<input type="text" class="form-control" id="nombre" value="'+nombre+'">' +
-        '</div>' +
+        '<input type="text" class="form-control" id="nombre" value="'+nom+'"></div>' +
         '<label for="apellido" class="col-sm-4 col-form-label">Apellido(s)</label>' +
         '<div class="col-sm-8">' +
-        '<input type="text" class="form-control" id="apellido" value="'+{apellido}+'">' +
+        '<input type="text" class="form-control" id="apellido" value="'+ape+'">' +
         '</div>' +
         '<label for="user" class="col-sm-4 col-form-label">Usuario</label>' +
         '<div class="col-sm-8">' +
-        '<input type="text" class="form-control" id="user" value="'+{user}+'">' +
+        '<input type="text" class="form-control" id="user" value="'+us+'">' +
         '</div>' +
         '<label for="password" class="col-sm-4 col-form-label">Contraseña</label>' +
         '<div class="col-sm-8">' +
-        '<input type="password" class="form-control" id="password" value="'+{password}+'">' +
+        '<input type="password" class="form-control" id="password" value="">' +
         '</div>' +
         '</div>',
         
         preConfirm: ()=>{
-            // setNombre ( document.getElementById('nombre').value)
-            // setApellido ( document.getElementById('apellido').value)
-            // setUser ( document.getElementById('user').value)
-            // setPassword ( document.getElementById('password').value)
-            // setRol ( document.getElementById('rol').value)
-            editarDatos()
+           var nombre = document.getElementById('nombre').value
+           var apellido = document.getElementById('apellido').value
+           var user = document.getElementById('user').value
+           var password = document.getElementById('password').value
+        //    var rol = document.getElementById('rol').value
+            //editarDatos()
+            axios.put(`http://localhost:3001/editarusuario`, {
+                id:id,
+                nombre: nombre,
+                apellido: apellido,
+                user: user,
+                password: password
+             })
+             .then((result)=>{
+                //console.log("Exito");
+                axios.get("http://localhost:3001/listausuario").then((response) => {
+                setUsuarios(response.data)
+        });
+            })
         }
     
     })
@@ -153,28 +168,7 @@ const Usuario = () => {
 }
 
 
-        
-    const editarDatos = () => {
-        setNombre ( document.getElementById('nombre').value) 
-        console.log(document.getElementById('nombre').value);
-        setApellido ( document.getElementById('apellido').value)
-        setUser ( document.getElementById('user').value)
-        setPassword ( document.getElementById('password').value)
-        // setRol ( document.getElementById('rol').value)
-    }
 
-    const enviarDatosEditados = (idUsuario) => {
-        setConfirmarEditar(false)
-        axios.post(`http://localhost:3001/editarusuario/${idUsuario}`, {
-                nombre: nombre,
-                apellido: apellido,
-                user: user,
-                password: password
-            })
-            .then((result)=>{
-                console.log("Exito");
-            })
-    }
 
 
     const eliminarUsuario = (idUsuario) => {
@@ -186,29 +180,25 @@ const Usuario = () => {
         icon: 'warning'
     })
         .then((result)=>{
-            if (result.isConfirmed) {
+          
                 axios.delete(`http://localhost:3001/eliminarusuario/${idUsuario}`)
+                .then((result)=>{
+                    //console.log("Exito");
+                    axios.get("http://localhost:3001/listausuario").then((response) => {
+                    setUsuarios(response.data)
+            });
+                })
 
-            } else {
-                
-            }
+  
         })
     }
 
     return (
         
         <div className="container rounded bg-white text-dark mt-3 p-3">
-                {confirmar ?
-            enviarDatos()
-            : 
-            ""
-        }
+            
 
-    {confirmarEditar ?
-                enviarDatosEditados()
-                : 
-                ""
-            }
+  
             <button className="float-end btn btn-info" onClick={crearUsuario}>Nuevo Usuario</button>
             <h1 className="text-center">Lista de Usuarios</h1>
             <table className="table table-hover table-striped table-white table-sm">
@@ -223,12 +213,12 @@ const Usuario = () => {
                 {usuarios.map((val)=>{
                 return(
 
-                <tr className="m-0 align-middle text-dark">
+                <tr className="m-0 align-middle text-dark" key={val.idUsuario}>
                     <td className="">{val.nombre}</td>
                     <td className="">{val.usuario}</td>
                     <td className="">
                         <div className="btn-group float-end">
-                        <button className="btn text-info border-0 bg-transparent" onClick={() => {editarUsuario(val.idUsuario,val.nombre)}}><FiEdit size={22}/></button>
+                        <button className="btn text-info border-0 bg-transparent" onClick={() => {editarUsuario(val.idUsuario,val.nombres,val.apellidos,val.usuario)}}><FiEdit size={22}/></button>
                         <button className="btn text-danger border-0 bg-transparent" onClick={()=>eliminarUsuario(val.idUsuario)}><FiTrash size={22} /></button>
                         </div>
                     </td>

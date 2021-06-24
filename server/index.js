@@ -377,37 +377,72 @@ app.post('/registrarusuario',(req,res) => {
   const password = req.body.password;
   const rol = req.body.rol;
   
+
   console.log(req.body)
   const consulta = "INSERT INTO usuario VALUES (null, ?,?, ?, ?, ?)";
-  db.query(consulta,[rol,nombre,apellido,user,password],(error,result) => {
-      if(error){
-          console.log("Ocurrio un error -> "+error)
-      }else{
-          console.log(result)
-          res.send(result);
-      }
-  })
-});
+  bcrypt.genSalt(10,function(error, salt){
+    bcrypt.hash(password,salt,function (err, hash) {
 
-app.post('/editarusuario/:idUsuario',(req,res) => {
-  const idUsuario = req.params.idUsuario;
+        db.query(consulta,[rol,nombre,apellido,user,hash],(error,result) => {
+            if(error){
+                console.log("Ocurrio un error -> "+error)
+            }else{
+                console.log(result)
+                res.send(result);
+            }
+        })
+      });
+    })
+})
+  
+
+app.put('/editarusuario',(req,res) => {
+  const idUsuario = req.body.id;
   const nombre = req.body.nombre;
   const apellido = req.body.apellido;
   const user = req.body.user;
   const password = req.body.password;
   
   console.log(req.body)
-  const consulta = "UPDATE usuario SET nombres = 'lola' WHERE idUsuario = ?";
-  // const consulta = "UPDATE usuario SET nombres = ? OR apellido = ? OR usuario = ? OR password = ?  WHERE idUsuario = ?";
-  db.query(consulta,idUsuario,[nombre,apellido,user,password],(error,result) => {
-  // db.query(consulta,idUsuario,(error,result) => {
-      if(error){
-          console.log("Ocurrio un error -> "+error)
-      }else{
-          console.log(result)
-          res.send(result);
-      }
-  })
+   const consulta = "UPDATE usuario SET nombres = ?, apellidos = ?, usuario = ?, password = ?  WHERE idUsuario = ?";
+   const conSPass = "UPDATE usuario SET nombres = ?, apellidos = ?, usuario = ?   WHERE idUsuario = ?";
+   if(password){
+   bcrypt.genSalt(10,function(error, salt){
+    bcrypt.hash(password,salt,function (err, hash) {
+
+
+        db.query(consulta,[nombre,apellido,user,password,idUsuario],(error,result) => {
+            if(error){
+                console.log("Ocurrio un error -> "+error)
+            }else{
+                console.log(result)
+                res.send(result);
+            }
+        })
+        
+      });
+    
+    })
+}
+else{
+    db.query(conSPass,[nombre,apellido,user,idUsuario],(error,result) => {
+        if(error){
+            console.log("Ocurrio un error -> "+error)
+        }else{
+            console.log(result)
+            res.send(result);
+        }
+    })
+    
+}
+//     db.query(consulta,[nombre,apellido,user,password,idUsuario],(error,result) => {
+//       if(error){
+//           console.log("Ocurrio un error -> "+error)
+//       }else{
+//           console.log(result)
+//           res.send(result);
+//       }
+//   })
 });
 
 app.delete('/eliminarusuario/:idUsuario',(req,res) => {
