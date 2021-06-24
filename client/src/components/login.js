@@ -65,7 +65,7 @@ const Login = () => {
                 confirmButtonColor: '#f39c12',
             });
         }else{
-            axios.post('http://192.168.1.7:3001/login',{
+            axios.post('http://localhost:3001/login',{
                 usuario: usuario,
                 clave: clave,
             }).then((response) => {
@@ -106,7 +106,7 @@ const Login = () => {
     }
 
     useEffect(() => {
-        axios.get("http://192.168.1.7:3001/login").then((response) => {
+        axios.get("http://localhost:3001/login").then((response) => {
             console.log(response)
         })
     }, [])
